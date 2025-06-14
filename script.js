@@ -38,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = {
                     name: trialForm.name.value,
                     age: trialForm.age.value,
+                    phone: trialForm.phone.value,
                     experience: trialForm.experience.value,
                     belt: trialForm.belt?.value || ''
                 };
@@ -158,6 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const data = {
       name: form.name.value,
       age: form.age.value,
+      phone: form.phone.value,
       experience: form.experience.value,
       belt: form.belt?.value || ''
     };
