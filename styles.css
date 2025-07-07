@@ -133,33 +133,244 @@ footer {
     width: 100%;
 }
 
+/* 모바일 최적화 - 600px 이하 */
 @media (max-width: 600px) {
     header {
         height: auto;
+        min-height: 80px;
     }
+    
     .logo-nav-container {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: center;
         height: auto;
         padding: 1rem;
+        gap: 1rem;
     }
+    
     nav {
         width: 100%;
         height: auto;
     }
+    
     .logo {
+        height: 50px;
         margin-bottom: 0.5rem;
         margin-right: 0;
     }
+    
     main {
-        margin-top: 60px;
+        margin-top: 120px;
+        padding: 1rem;
     }
+    
+    nav ul {
+        flex-direction: column !important;
+        gap: 0.5rem;
+    }
+    
+    nav ul li {
+        margin: 0;
+        height: auto;
+        width: 100%;
+    }
+    
     nav ul li a {
         line-height: 1.5;
         height: auto;
+        padding: 0.8rem 1rem;
+        font-size: 1rem;
+        width: 100%;
+        display: block;
     }
+    
+    section {
+        padding: 2rem 1rem;
+        min-height: auto;
+    }
+    
+    h1 {
+        font-size: 2rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+    
     .slogan-bar {
         padding: 0.5rem 0;
+    }
+    
+    .slogan {
+        font-size: 1.5rem !important;
+        letter-spacing: 1px;
+    }
+    
+    /* 비디오 반응형 */
+    video {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+    }
+    
+    /* 미션 블록 모바일 최적화 */
+    .mission-row {
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .mission-block {
+        width: 100%;
+        padding: 1.5rem;
+    }
+    
+    .mission-img {
+        width: 100%;
+        max-width: 300px;
+        height: auto;
+    }
+    
+    .mission-title {
+        font-size: 1.3rem;
+    }
+    
+    .mission-desc {
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+    
+    /* 프로그램 그리드 모바일 */
+    .programs-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .program-card {
+        width: 100%;
+    }
+    
+    .program-img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+    
+    /* 연락처 섹션 모바일 */
+    .contact-box-horizontal {
+        flex-direction: column;
+        gap: 2rem;
+        padding: 1.5rem;
+    }
+    
+    .contact-info,
+    .contact-map,
+    .visit-us-box {
+        width: 100%;
+    }
+    
+    .contact-map iframe {
+        width: 100% !important;
+        height: 250px !important;
+    }
+    
+    /* 폼 모바일 최적화 */
+    #trial-form {
+        width: 100%;
+        padding: 1.5rem;
+    }
+    
+    #trial-form label {
+        font-size: 0.95rem;
+    }
+    
+    #trial-form input,
+    #trial-form select {
+        font-size: 1rem;
+        padding: 0.8rem;
+    }
+    
+    #trial-form button[type="submit"] {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1.1rem;
+    }
+    
+    /* 터치 인터랙션 개선 */
+    nav ul li a,
+    button,
+    input[type="submit"],
+    select {
+        -webkit-tap-highlight-color: rgba(0,0,0,0.1);
+        touch-action: manipulation;
+    }
+    
+    /* 스크롤 성능 개선 */
+    * {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* 폼 요소 터치 최적화 */
+    input, select, textarea {
+        font-size: 16px; /* iOS에서 줌 방지 */
+        -webkit-appearance: none;
+        border-radius: 0;
+    }
+    
+    /* 버튼 터치 피드백 */
+    button:active {
+        transform: scale(0.98);
+        transition: transform 0.1s ease;
+    }
+    
+    /* 링크 터치 피드백 */
+    a:active {
+        opacity: 0.7;
+        transition: opacity 0.1s ease;
+    }
+}
+
+/* 태블릿 최적화 - 601px ~ 900px */
+@media (min-width: 601px) and (max-width: 900px) {
+    .logo-nav-container {
+        flex-direction: row !important;
+        padding: 0 1rem;
+    }
+    
+    nav ul {
+        flex-direction: row !important;
+        gap: 0.5rem;
+    }
+    
+    nav ul li {
+        display: flex !important;
+        align-items: center !important;
+        height: 100% !important;
+        margin: 0 8px !important;
+        text-align: center !important;
+    }
+    
+    nav ul li a {
+        font-size: 1rem;
+        padding: 0.4rem 0.6rem;
+    }
+    
+    .mission-row {
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .mission-block {
+        width: 100%;
+    }
+    
+    .programs-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+    
+    .contact-box-horizontal {
+        flex-direction: column;
+        gap: 2rem;
     }
 }
 
@@ -273,7 +484,35 @@ footer {
         margin-top: 60px;
     }
     main {
-        margin-top: 60px;
+        margin-top: 120px;
+    }
+    
+    /* 텍스트 가독성 개선 */
+    p {
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+    
+    /* 이미지 최적화 */
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+    
+    /* 버튼 터치 친화적 */
+    button, a {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* 스크롤 개선 */
+    html {
+        scroll-behavior: smooth;
+    }
+    
+    /* 터치 스크롤 최적화 */
+    body {
+        -webkit-overflow-scrolling: touch;
     }
 }
 
@@ -1062,4 +1301,44 @@ main section#trial-form {
 .register-btn:hover {
   background: #f9d423;
   color: #222;
+}
+
+/* 매우 작은 화면 (320px 이하) 최적화 */
+@media (max-width: 320px) {
+    .logo {
+        height: 40px;
+    }
+    
+    nav ul li a {
+        font-size: 0.9rem;
+        padding: 0.6rem 0.8rem;
+    }
+    
+    .slogan {
+        font-size: 1.3rem !important;
+    }
+    
+    h1 {
+        font-size: 1.8rem;
+    }
+    
+    h2 {
+        font-size: 1.3rem;
+    }
+    
+    .mission-title {
+        font-size: 1.2rem;
+    }
+    
+    .mission-desc {
+        font-size: 0.9rem;
+    }
+    
+    section {
+        padding: 1.5rem 0.8rem;
+    }
+    
+    main {
+        padding: 0.8rem;
+    }
 }
