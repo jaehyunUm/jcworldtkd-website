@@ -89,25 +89,33 @@ document.addEventListener('DOMContentLoaded', () => {
             this.classList.add('active');
         });
     });
-
-    // Schedule API 연동
     function loadSchedule() {
         const scheduleSection = document.getElementById('schedule');
         scheduleSection.innerHTML = '<h2>Schedule</h2><p>Loading schedule...</p>';
-        const dojangCode = 'UM2024'; // 실제 코드로 대체
+        const dojangCode = 'UM2024';
+      
         fetch(`https://mats-backend.onrender.com/api/public-get-schedule?dojang_code=${dojangCode}`)
-            .then(res => res.json())
-            .then(data => {
-                if (Array.isArray(data) && data.length > 0) {
-                    scheduleSection.innerHTML = '<h2>Schedule</h2>' + renderScheduleTable(data);
-                } else {
-                    scheduleSection.innerHTML = '<h2>Schedule</h2><p>No schedule data available.</p>';
-                }
-            })
-            .catch(err => {
-                scheduleSection.innerHTML = '<h2>Schedule</h2><p style="color:red;">Failed to load schedule.</p>';
+          .then(res => res.json())
+          .then(data => {
+            // 🔒 서버가 정렬해서 주지만, 혹시 몰라 클라이언트에서도 한 번 더 정렬
+            const rows = Array.isArray(data) ? data.slice() : [];
+            rows.sort((a, b) => {
+              // sort_order 우선
+              const so = (a.sort_order ?? 0) - (b.sort_order ?? 0);
+              if (so !== 0) return so;
+              // 보조: 시작시각(HH:MM) 비교
+              const getStart = t => (t || '').split('~')[0];
+              return getStart(a.time).localeCompare(getStart(b.time));
             });
-    }
+      
+            scheduleSection.innerHTML = rows.length
+              ? '<h2>Schedule</h2>' + renderScheduleTable(rows)
+              : '<h2>Schedule</h2><p>No schedule data available.</p>';
+          })
+          .catch(() => {
+            scheduleSection.innerHTML = '<h2>Schedule</h2><p style="color:red;">Failed to load schedule.</p>';
+          });
+      }
 
     function renderScheduleTable(data) {
         let html = `
