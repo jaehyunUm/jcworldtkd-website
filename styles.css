@@ -534,13 +534,7 @@ main section#home {
     display: block;
 }
 
-main section#contact-row {
-    display: flex;
-}
 
-main section#trial-form {
-    display: block;
-}
 
 .schedule-list {
     list-style: none;
