@@ -693,13 +693,15 @@ main section#trial-form {
     display: flex;
     align-items: flex-start;
     gap: 2.2rem;
-    max-width: 1100px;
-    margin: 2.5rem auto 2.5rem auto;
-    padding: 1.5rem 2rem;
+    width: 100%;          /* 전체 화면 가득 */
+    max-width: none;      /* 제한 제거 */
+    margin: 2.5rem 0;     /* 가운데 정렬 제거 */
+    padding: 2rem 3rem;   /* 양쪽 여백만 살짝 */
     background: #fff;
-    border-radius: 18px;
-    box-shadow: 0 4px 24px rgba(44,62,80,0.10);
+    border-radius: 0;     /* 박스 느낌 없애고 전체 섹션처럼 */
+    box-shadow: none;     /* 그림자도 제거 가능 */
 }
+
 
 .mission-block {
     flex: 1 1 0;
