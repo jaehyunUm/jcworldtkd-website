@@ -710,12 +710,12 @@ main section#home {
     align-items: center;
     text-align: left;
     min-width: 260px;
-    max-width: 480px;
+    max-width: none;   /* ← 480px 제한 제거 */
+    width: 100%;       /* 부모 폭 다 쓰게 */
 }
 
 #about .mission-block {
-    display: block !important;   /* flex-column 해제 */
-    text-align: left;
+    align-items: flex-start;  /* 텍스트 왼쪽 정렬 */
 }
 
 .mission-img {
