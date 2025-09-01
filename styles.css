@@ -105,9 +105,12 @@ section {
     align-items: center;
     text-align: center;
 }
-#about {
-    display: block;      /* section의 기본 display로 돌려줌 */
-    text-align: left;    /* 가운데 정렬 해제 */
+section#about {
+    display: block !important;
+    text-align: left !important;
+    min-height: auto !important;
+    justify-content: initial !important;
+    align-items: initial !important;
 }
 
 h1 {
