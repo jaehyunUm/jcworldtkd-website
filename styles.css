@@ -1388,11 +1388,14 @@ main section#home {
     }
   }
   .responsive-video {
-    width: 90vw;          /* 뷰포트 너비의 90% */
-    max-width: 800px;     /* 랩탑에서도 너무 크지 않게 */
-    height: auto;
+    width: 90vw;          /* 화면 폭의 90% */
+    max-width: 800px;     /* 최대 폭 제한 */
+    height: auto;         
+    max-height: 450px;    /* 최대 높이 제한 (추가) */
+    object-fit: cover;    /* 잘라도 꽉 차게 */
     border-radius: 16px;
     margin: 0 auto 2rem auto;
     display: block;
     box-shadow: 0 4px 24px rgba(0,0,0,0.1);
   }
+  
