@@ -106,11 +106,10 @@ section {
     text-align: center;
 }
 section#about {
-    display: block !important;
-    text-align: left !important;
-    min-height: auto !important;
-    justify-content: initial !important;
-    align-items: initial !important;
+    text-align: left;       /* 글자 왼쪽 정렬만 유지 */
+    min-height: auto;
+    justify-content: initial;
+    align-items: initial;
 }
 
 h1 {
