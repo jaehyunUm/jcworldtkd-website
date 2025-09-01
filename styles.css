@@ -1387,4 +1387,12 @@ main section#home {
       margin-top: 1rem;
     }
   }
-  
+  .responsive-video {
+    width: 90vw;          /* 뷰포트 너비의 90% */
+    max-width: 800px;     /* 랩탑에서도 너무 크지 않게 */
+    height: auto;
+    border-radius: 16px;
+    margin: 0 auto 2rem auto;
+    display: block;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+  }
