@@ -1357,35 +1357,28 @@ main section#home {
         padding: 0.8rem;
     }
 }
-
-/* 기본 (PC) */
+/* 기본 (랩탑 이상) */
 #about .profile-row {
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
     gap: 2rem;
-    flex-wrap: nowrap;
-    margin-bottom: 2rem;
+    flex-wrap: nowrap;   /* 가로 배치 유지 */
+    max-width: 1000px;   /* 전체 화면 너무 커지지 않도록 */
+    margin: 0 auto;      /* 가운데 정렬 */
   }
   
-  /* 모바일 (600px 이하일 때는 세로 정렬) */
-  @media (max-width: 600px) {
-    #about .profile-row {
-      flex-direction: column;   /* 세로로 쌓기 */
-      align-items: center;      /* 가운데 정렬 */
-      text-align: center;       /* 텍스트도 중앙 정렬 */
-    }
+  #about .profile-row img {
+    width: 40%;          /* 가로 폭의 40% */
+    max-width: 380px;    /* 이미지 최대 크기 제한 */
+    border-radius: 12px;
+    flex-shrink: 0;      /* 줄어들지 않게 */
+  }
   
-    #about .profile-row img {
-      width: 100%;              /* 화면 가득 */
-      max-width: 300px;         /* 너무 커지지 않게 제한 */
-    }
-  
-    #about .profile-row .mission-text {
-      width: 100%;
-      text-align: left;         /* 텍스트는 왼쪽 정렬하고 싶으면 이걸로 */
-      margin-top: 1rem;
-    }
+  #about .profile-row .mission-text {
+    width: 55%;          /* 나머지 55% */
+    min-width: 280px;    /* 너무 작아지지 않게 */
+    text-align: left;
   }
   .responsive-video {
     width: 90vw;          /* 화면 폭의 90% */
