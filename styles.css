@@ -105,6 +105,10 @@ section {
     align-items: center;
     text-align: center;
 }
+#about {
+    display: block;      /* section의 기본 display로 돌려줌 */
+    text-align: left;    /* 가운데 정렬 해제 */
+}
 
 h1 {
     font-size: 2.5rem;
