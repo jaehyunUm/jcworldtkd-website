@@ -720,6 +720,11 @@ main section#trial-form {
     max-width: 480px;
 }
 
+#about .mission-block {
+    display: block !important;   /* flex-column 해제 */
+    text-align: left;
+}
+
 .mission-img {
     width: 180px;
     height: 180px;
