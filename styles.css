@@ -1511,3 +1511,100 @@ main section#home {
 .party-gallery img:hover {
     transform: scale(1.03);
 }
+/* Ranking Section */
+.ranking-section {
+    padding-bottom: 4rem;
+    background-color: #fff;
+}
+
+.ranking-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 1rem;
+    text-align: center;
+}
+
+.ranking-controls {
+    margin-bottom: 20px;
+}
+
+.ranking-select {
+    width: 100%;
+    max-width: 400px;
+    padding: 12px;
+    font-size: 1rem;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    cursor: pointer;
+    outline: none;
+}
+
+.ranking-select:focus {
+    border-color: #d32f2f;
+}
+
+/* Responsive Table */
+.table-wrapper {
+    overflow-x: auto; /* 모바일에서 가로 스크롤 허용 */
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px; /* 너무 좁아지지 않도록 최소 너비 설정 */
+}
+
+.ranking-table th, 
+.ranking-table td {
+    padding: 12px 15px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+.ranking-table th {
+    background-color: #333;
+    color: #fff;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.ranking-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.ranking-table tr:hover {
+    background-color: #fff4f4; /* 마우스 올렸을 때 살짝 붉은색 */
+}
+
+/* 1, 2, 3등 강조 */
+.rank-1 { color: #FFD700; font-weight: bold; font-size: 1.2em; } /* Gold */
+.rank-2 { color: #C0C0C0; font-weight: bold; font-size: 1.1em; } /* Silver */
+.rank-3 { color: #CD7F32; font-weight: bold; font-size: 1.1em; } /* Bronze */
+
+.empty-message {
+    padding: 30px;
+    color: #888;
+    font-style: italic;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    margin: 20px auto;
+}
+.spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #d32f2f;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 10px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

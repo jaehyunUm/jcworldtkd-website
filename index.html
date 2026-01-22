@@ -224,6 +224,50 @@
     
 
         <section id="schedule"></section>
+
+        <section id="ranking" class="ranking-section">
+            <div class="slogan-bar">
+                <h2 class="slogan">Hall of Fame</h2>
+            </div>
+        
+            <div class="ranking-container">
+                <div class="ranking-header">
+                    <h3 class="mission-title">Top Students Ranking</h3>
+                    <p class="mission-desc">Check out the top records of our hardworking students!</p>
+                </div>
+        
+                <div class="ranking-controls">
+                    <select id="testSelect" class="ranking-select">
+                        <option value="" disabled selected>Select a Challenge (Test)</option>
+                        </select>
+                </div>
+        
+                <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Loading Rankings...</p>
+                </div>
+        
+                <div class="table-wrapper">
+                    <table class="ranking-table" id="rankingTable">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Name</th>
+                                <th>Age</th>
+                                <th>Belt</th>
+                                <th>Studio</th>
+                                <th>Result</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rankingBody">
+                            <tr>
+                                <td colspan="6" class="empty-message">Please select a test to see the rankings.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
      
         <section id="birthday" class="birthday-section">
             <div class="birthday-header">
