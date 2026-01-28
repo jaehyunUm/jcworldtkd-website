@@ -223,7 +223,37 @@
     </section>
     
 
-        <section id="schedule"></section>
+    <section id="schedule" class="schedule-section">
+        <div class="slogan-bar">
+            <h2 class="slogan">Class Schedule</h2>
+        </div>
+    
+        <div class="schedule-container">
+            <div id="scheduleLoading" class="loading-spinner">
+                <div class="spinner"></div>
+                <p>Loading Schedule...</p>
+            </div>
+    
+            <div class="table-wrapper">
+                <table class="schedule-table" id="scheduleTable" style="display:none;">
+                    <thead>
+                        <tr>
+                            <th class="time-col">Time</th>
+                            <th>Mon</th>
+                            <th>Tue</th>
+                            <th>Wed</th>
+                            <th>Thur</th> <th>Fri</th>
+                            <th>Sat</th>
+                        </tr>
+                    </thead>
+                    <tbody id="scheduleBody">
+                        </tbody>
+                </table>
+            </div>
+            
+            <p class="schedule-note">* Schedule is subject to change.</p>
+        </div>
+    </section>
 
         <section id="ranking" class="ranking-section">
             <div class="slogan-bar">
