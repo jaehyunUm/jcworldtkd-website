@@ -83,37 +83,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 3-2. 랭킹 데이터 불러오기
-    async function fetchRankingData(testId) {
-        if (!testId || !rankingBody) return;
+   // 3-2. 랭킹 데이터 불러오기 (수정됨)
+   async function fetchRankingData(testId) {
+    if (!testId || !rankingBody) return;
 
-        rankingBody.innerHTML = ''; // 초기화
-        if(loadingSpinner) loadingSpinner.style.display = 'block';
+    rankingBody.innerHTML = ''; // 초기화
+    if(loadingSpinner) loadingSpinner.style.display = 'block'; // 로딩 표시
 
-        try {
-            const response = await fetch(`${API_BASE_URL}/public/ranking/${testId}?dojang_code=${MY_DOJANG_CODE}`);
-            const data = await response.json();
+    try {
+        const response = await fetch(`${API_BASE_URL}/public/ranking/${testId}?dojang_code=${MY_DOJANG_CODE}`);
+        const data = await response.json();
 
-            if (Array.isArray(data) && data.length > 0) {
-                // 데이터 정렬 (Time 타입은 오름차순, Count 타입은 내림차순)
-                const sortedData = data.sort((a, b) => {
-                    if (a.evaluation_type === 'time') {
-                        return parseTime(a.count) - parseTime(b.count);
-                    } else {
-                        return parseInt(b.count) - parseInt(a.count);
-                    }
-                });
-                renderRankingTable(sortedData);
-            } else {
-                rankingBody.innerHTML = '<tr><td colspan="6" class="empty-message">No ranking data available yet.</td></tr>';
-            }
-        } catch (error) {
-            console.error("Ranking Data Error:", error);
-            rankingBody.innerHTML = '<tr><td colspan="6" class="empty-message">Error loading rankings.</td></tr>';
-        } finally {
-            if(loadingSpinner) loadingSpinner.style.display = 'none';
+        if (Array.isArray(data) && data.length > 0) {
+            // [수정] 프론트엔드에서 다시 정렬(sort)하지 말고, 백엔드 데이터를 바로 넘깁니다.
+            renderRankingTable(data);
+        } else {
+            rankingBody.innerHTML = '<tr><td colspan="6" class="empty-message">No ranking data available yet.</td></tr>';
         }
+    } catch (error) {
+        console.error("Ranking Data Error:", error);
+        rankingBody.innerHTML = '<tr><td colspan="6" class="empty-message">Error loading rankings.</td></tr>';
+    } finally {
+        if(loadingSpinner) loadingSpinner.style.display = 'none'; // 로딩 숨김
     }
+}
 
     // 3-3. 시간 변환 헬퍼 (0'30" -> 30)
     function parseTime(timeStr) {
@@ -126,31 +119,36 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) { return 999999; }
     }
 
-    // 3-4. 랭킹 테이블 렌더링
-    function renderRankingTable(data) {
-        rankingBody.innerHTML = '';
-        data.forEach((item, index) => {
-            const rank = index + 1;
-            const row = document.createElement('tr');
-            
-            // 메달 이모지
-            let rankDisplay = rank;
-            let rankClass = '';
-            if (rank === 1) { rankDisplay = '🥇'; rankClass = 'rank-1'; }
-            else if (rank === 2) { rankDisplay = '🥈'; rankClass = 'rank-2'; }
-            else if (rank === 3) { rankDisplay = '🥉'; rankClass = 'rank-3'; }
+   // 3-4. 랭킹 테이블 렌더링 (수정됨)
+   function renderRankingTable(data) {
+    rankingBody.innerHTML = '';
+    
+    data.forEach((item, index) => {
+        // [수정 핵심] index + 1 (단순 줄번호) 대신 백엔드에서 온 rank를 사용
+        const rank = item.rank; 
+        
+        const row = document.createElement('tr');
+        
+        // 메달 이모지 처리
+        let rankDisplay = rank;
+        let rankClass = '';
+        
+        // 1, 2, 3등은 메달 표시
+        if (rank === 1) { rankDisplay = '🥇'; rankClass = 'rank-1'; }
+        else if (rank === 2) { rankDisplay = '🥈'; rankClass = 'rank-2'; }
+        else if (rank === 3) { rankDisplay = '🥉'; rankClass = 'rank-3'; }
 
-            row.innerHTML = `
-                <td class="${rankClass}">${rankDisplay}</td>
-                <td style="font-weight:bold;">${item.name}</td>
-                <td>${item.age}</td>
-                <td>${item.belt_color}</td>
-                <td>${item.studio_name}</td>
-                <td style="font-weight:bold; color:#d32f2f;">${item.count}</td>
-            `;
-            rankingBody.appendChild(row);
-        });
-    }
+        row.innerHTML = `
+            <td class="${rankClass}">${rankDisplay}</td>
+            <td style="font-weight:bold;">${item.name}</td>
+            <td>${item.age}</td>
+            <td>${item.belt_color}</td>
+            <td>${item.studio_name}</td>
+            <td style="font-weight:bold; color:#d32f2f;">${item.count}</td>
+        `;
+        rankingBody.appendChild(row);
+    });
+}
 
     // 랭킹 드롭다운 변경 시 데이터 로드 이벤트
     if (testSelect) {
