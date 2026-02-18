@@ -255,49 +255,69 @@
         </div>
     </section>
 
-        <section id="ranking" class="ranking-section">
-            <div class="slogan-bar">
-                <h2 class="slogan">Hall of Fame</h2>
+    <section id="ranking" class="ranking-section">
+        <div class="slogan-bar">
+            <h2 class="slogan">🏆 Hall of Legends : Challenge Your Limits</h2>
+        </div>
+    
+        <div class="ranking-container">
+            <div class="ranking-header">
+                <h3 class="mission-title">Top 10 Leaders Board</h3>
+                <p class="mission-desc">
+                    Success is earned, not given. <br>
+                    Check out the records of our hardest-working students. <br>
+                    <span style="color: #d32f2f; font-weight: bold; font-size: 0.95em;">
+                        Are you ready to see your name here?
+                    </span>
+                </p>
             </div>
-        
-            <div class="ranking-container">
-                <div class="ranking-header">
-                    <h3 class="mission-title">Top Students Ranking</h3>
-                    <p class="mission-desc">Check out the top records of our hardworking students!</p>
-                </div>
-        
-                <div class="ranking-controls">
-                    <select id="testSelect" class="ranking-select">
-                        <option value="" disabled selected>Select a Challenge (Test)</option>
-                        </select>
-                </div>
-        
-                <div id="loadingSpinner" class="loading-spinner" style="display: none;">
-                    <div class="spinner"></div>
-                    <p>Loading Rankings...</p>
-                </div>
-        
-                <div class="table-wrapper">
-                    <table class="ranking-table" id="rankingTable">
-                        <thead>
-                            <tr>
-                                <th>Rank</th>
-                                <th>Name</th>
-                                <th>Age</th>
-                                <th>Belt</th>
-                                <th>Studio</th>
-                                <th>Result</th>
-                            </tr>
-                        </thead>
-                        <tbody id="rankingBody">
-                            <tr>
-                                <td colspan="6" class="empty-message">Please select a test to see the rankings.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+    
+            <div class="ranking-controls">
+                <select id="testSelect" class="ranking-select">
+                    <option value="" disabled selected>Select a Challenge (Test) to Reveal the Champions</option>
+                </select>
             </div>
-        </section>
+    
+            <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+                <div class="spinner"></div>
+                <p>Fetching Records...</p>
+            </div>
+    
+            <div class="table-wrapper">
+                <table class="ranking-table" id="rankingTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 10%;">Rank</th> <th style="width: 30%;">Name</th>
+                            <th>Age</th>
+                            <th>Belt</th>
+                            <th>Studio</th>
+                            <th>Result</th> </tr>
+                    </thead>
+                    <tbody id="rankingBody">
+                        <tr>
+                            <td colspan="6" class="empty-message">
+                                <div style="padding: 2rem 0;">
+                                    <p style="font-size: 1.1rem; font-weight: bold; color: #555;">
+                                        Who rules the mat? 🥋
+                                    </p>
+                                    <p style="color: #888; margin-top: 0.5rem;">
+                                        Select a test above to see the Top 10 warriors.
+                                    </p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="ranking-footer-cta" style="margin-top: 1.5rem; text-align: center; background: #f9f9f9; padding: 15px; border-radius: 8px;">
+                <p style="margin: 0; font-size: 0.9rem; color: #444;">
+                    Not on the list yet? Don't give up! <br>
+                    <strong>Consistent training creates champions.</strong> Start your journey today.
+                </p>
+            </div>
+        </div>
+    </section>
      
         <section id="birthday" class="birthday-section">
             <div class="birthday-header">
@@ -346,9 +366,9 @@
             </div>
             
             <div class="party-gallery">
-                <img src="Howard.png" alt="Birthday Cake Cutting with Sword - Howard" style="object-fit: cover;">
-                <img src="Luca.png" alt="Birthday Boy with Master - Luca" style="object-fit: cover;">
-                <img src="Mansa.png" alt="Group Birthday Celebration - Mansa" style="object-fit: cover;">
+                <img src="images/Howard.png" alt="Birthday Cake Cutting with Sword - Howard" style="object-fit: cover;">
+                <img src="images/Luca.png" alt="Birthday Boy with Master - Luca" style="object-fit: cover;">
+                <img src="images/Mansa.png" alt="Group Birthday Celebration - Mansa" style="object-fit: cover;">
             </div>
         </section>
         
