@@ -22,12 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // 특정 섹션이 열릴 때 필요한 데이터 불러오기
         if (id === 'schedule') {
             loadSchedule();
-        } else if (id === 'ranking') {
-            // 랭킹 섹션이 처음 열릴 때 옵션이 비어있으면 로드
-            const testSelect = document.getElementById('testSelect');
-            if (testSelect && testSelect.options.length <= 1) {
-                fetchRankingOptions();
-            }
         }
         
         // 페이지 상단으로 스크롤 이동
@@ -50,110 +44,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 초기 화면 설정 (Home)
     showSection('home');
-
-
-    // ============================================================
-    // 3. 랭킹 (Ranking) 기능
-    // ============================================================
-    const testSelect = document.getElementById('testSelect');
-    const rankingBody = document.getElementById('rankingBody');
-    const loadingSpinner = document.getElementById('loadingSpinner');
-
-    // 3-1. 테스트 목록 불러오기 (Dropdown 옵션)
-    async function fetchRankingOptions() {
-        if (!testSelect) return;
-        
-        try {
-            const response = await fetch(`${API_BASE_URL}/public/grouped-objective-tests?dojang_code=${MY_DOJANG_CODE}`);
-            if (!response.ok) throw new Error('Failed to fetch tests');
-            
-            const data = await response.json();
-            
-            // 기존 옵션 초기화 (첫 번째 안내 문구 제외)
-            testSelect.innerHTML = '<option value="" disabled selected>Select a Challenge (Test)</option>';
-
-            data.forEach(test => {
-                const option = document.createElement('option');
-                option.value = test.group_id;
-                option.textContent = test.standardized_name;
-                testSelect.appendChild(option);
-            });
-        } catch (error) {
-            console.error("Ranking Options Error:", error);
-        }
-    }
-
-   // 3-2. 랭킹 데이터 불러오기 (수정됨)
-   async function fetchRankingData(testId) {
-    if (!testId || !rankingBody) return;
-
-    rankingBody.innerHTML = ''; // 초기화
-    if(loadingSpinner) loadingSpinner.style.display = 'block'; // 로딩 표시
-
-    try {
-        const response = await fetch(`${API_BASE_URL}/public/ranking/${testId}?dojang_code=${MY_DOJANG_CODE}`);
-        const data = await response.json();
-
-        if (Array.isArray(data) && data.length > 0) {
-            // [수정] 프론트엔드에서 다시 정렬(sort)하지 말고, 백엔드 데이터를 바로 넘깁니다.
-            renderRankingTable(data);
-        } else {
-            rankingBody.innerHTML = '<tr><td colspan="6" class="empty-message">No ranking data available yet.</td></tr>';
-        }
-    } catch (error) {
-        console.error("Ranking Data Error:", error);
-        rankingBody.innerHTML = '<tr><td colspan="6" class="empty-message">Error loading rankings.</td></tr>';
-    } finally {
-        if(loadingSpinner) loadingSpinner.style.display = 'none'; // 로딩 숨김
-    }
-}
-
-    // 3-3. 시간 변환 헬퍼 (0'30" -> 30)
-    function parseTime(timeStr) {
-        try {
-            const match = timeStr.match(/(\d+)'(\d+)"/);
-            if (match) {
-                return parseInt(match[1]) * 60 + parseInt(match[2]);
-            }
-            return 999999; 
-        } catch (e) { return 999999; }
-    }
-
-   // 3-4. 랭킹 테이블 렌더링 (수정됨)
-   function renderRankingTable(data) {
-    rankingBody.innerHTML = '';
-    
-    data.forEach((item, index) => {
-        // [수정 핵심] index + 1 (단순 줄번호) 대신 백엔드에서 온 rank를 사용
-        const rank = item.rank; 
-        
-        const row = document.createElement('tr');
-        
-        // 메달 이모지 처리
-        let rankDisplay = rank;
-        let rankClass = '';
-        
-        // 1, 2, 3등은 메달 표시
-        if (rank === 1) { rankDisplay = '🥇'; rankClass = 'rank-1'; }
-        else if (rank === 2) { rankDisplay = '🥈'; rankClass = 'rank-2'; }
-        else if (rank === 3) { rankDisplay = '🥉'; rankClass = 'rank-3'; }
-
-        row.innerHTML = `
-            <td class="${rankClass}">${rankDisplay}</td>
-            <td style="font-weight:bold;">${item.name}</td>
-            <td>${item.age}</td>
-            <td>${item.belt_color}</td>
-            <td>${item.studio_name}</td>
-            <td style="font-weight:bold; color:#d32f2f;">${item.count}</td>
-        `;
-        rankingBody.appendChild(row);
-    });
-}
-
-    // 랭킹 드롭다운 변경 시 데이터 로드 이벤트
-    if (testSelect) {
-        testSelect.addEventListener('change', (e) => fetchRankingData(e.target.value));
-    }
 
 
     // ============================================================
@@ -215,62 +105,236 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // ============================================================
-    // 5. 무료 체험 (Free Trial) 폼 기능
+    // 5. 무료 체험 (Free Trial) 폼 기능 - 2단계(추천 클래스 + 날짜 선택)
     // ============================================================
-    const trialForm = document.getElementById('trial-form');
+    const step1Form = document.getElementById('trial-form-step1');
     const beltInput = document.getElementById('belt-input');
-    const experienceSelect = document.querySelector('select[name="experience"]');
+    const beltSelect = document.getElementById('trial-belt');
+    const experienceSelect = document.getElementById('trial-experience');
+    const findClassBtn = document.getElementById('find-class-btn');
 
-    if (trialForm) {
-        // 경험 여부에 따라 벨트 입력칸 표시/숨김
+    const step2Div = document.getElementById('trial-step2');
+    const step2NameSpan = document.getElementById('trial-step2-name');
+    const recommendedList = document.getElementById('recommended-classes-list');
+    const noClassesMessage = document.getElementById('no-classes-message');
+    const backBtn = document.getElementById('trial-back-btn');
+    const confirmBtn = document.getElementById('trial-confirm-btn');
+    const successMessage = document.getElementById('trial-success-message');
+
+    let beltLevelsLoaded = false;
+    let selectedClassChoice = null; // { class_name, day, time, dateLabel, dateISO }
+
+    if (step1Form) {
+
+        // 경험 여부에 따라 벨트 선택칸 표시/숨김 (+ 벨트 목록 최초 1회 로드)
         if (experienceSelect && beltInput) {
-            experienceSelect.addEventListener('change', function () {
-                beltInput.style.display = this.value === 'yes' ? 'block' : 'none';
+            experienceSelect.addEventListener('change', async function () {
+                const showBelt = this.value === 'yes';
+                beltInput.style.display = showBelt ? 'block' : 'none';
+
+                if (showBelt && !beltLevelsLoaded && beltSelect) {
+                    beltLevelsLoaded = true; // 중복 요청 방지 (실패해도 재시도는 페이지 새로고침으로)
+                    try {
+                        const res = await fetch(`${API_BASE_URL}/public/belt-levels?dojang_code=${MY_DOJANG_CODE}`);
+                        if (res.ok) {
+                            const belts = await res.json();
+                            belts.forEach((b) => {
+                                const opt = document.createElement('option');
+                                opt.value = b.belt_color;
+                                opt.textContent = b.belt_color;
+                                beltSelect.appendChild(opt);
+                            });
+                        }
+                    } catch (err) {
+                        console.error('Belt levels fetch error:', err);
+                        // 실패해도 폼 진행에는 문제 없음 (벨트는 선택 사항)
+                    }
+                }
             });
         }
 
-        // 폼 제출 이벤트
-        trialForm.addEventListener('submit', async function (e) {
+        // 요일 -> 다음 예정 날짜 계산 (내일부터 최대 count개)
+        function getNextOccurrences(dayAbbrev, count) {
+            const dayMap = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thur: 4, Fri: 5, Sat: 6 };
+            const targetDow = dayMap[dayAbbrev];
+            const results = [];
+            if (targetDow === undefined) return results;
+
+            const today = new Date();
+            for (let i = 1; results.length < count && i <= 21; i++) {
+                const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
+                if (d.getDay() === targetDow) {
+                    results.push(d);
+                }
+            }
+            return results;
+        }
+
+        function formatDateLabel(d) {
+            return d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+        }
+
+        function renderRecommendedClasses(classes, studentName) {
+            recommendedList.innerHTML = '';
+            selectedClassChoice = null;
+            confirmBtn.disabled = true;
+
+            if (step2NameSpan) step2NameSpan.textContent = studentName || 'your child';
+
+            if (!classes || classes.length === 0) {
+                noClassesMessage.style.display = 'block';
+                confirmBtn.disabled = false; // 매칭 실패해도 기본 정보만으로 문의는 가능하게
+                return;
+            }
+
+            noClassesMessage.style.display = 'none';
+
+            let optionIndex = 0;
+            classes.forEach((cls) => {
+                const upcomingDates = getNextOccurrences(cls.day, 2);
+                upcomingDates.forEach((d) => {
+                    optionIndex += 1;
+                    const id = `class-option-${optionIndex}`;
+                    const dateLabel = formatDateLabel(d);
+
+                    const wrapper = document.createElement('label');
+                    wrapper.className = 'recommended-class-option';
+                    wrapper.setAttribute('for', id);
+
+                    const radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.name = 'classChoice';
+                    radio.id = id;
+                    radio.value = String(optionIndex);
+
+                    radio.addEventListener('change', () => {
+                        document.querySelectorAll('.recommended-class-option').forEach((el) => el.classList.remove('selected'));
+                        wrapper.classList.add('selected');
+                        selectedClassChoice = {
+                            class_name: cls.class_name,
+                            day: cls.day,
+                            time: cls.time,
+                            dateLabel: dateLabel,
+                            dateISO: d.toISOString().slice(0, 10)
+                        };
+                        confirmBtn.disabled = false;
+                    });
+
+                    const textWrap = document.createElement('div');
+                    textWrap.className = 'option-text';
+
+                    const classNameEl = document.createElement('div');
+                    classNameEl.className = 'option-class-name';
+                    classNameEl.textContent = cls.class_name;
+
+                    const dateEl = document.createElement('div');
+                    dateEl.className = 'option-date';
+                    dateEl.textContent = `${dateLabel} · ${cls.time || ''}`;
+
+                    textWrap.appendChild(classNameEl);
+                    textWrap.appendChild(dateEl);
+
+                    wrapper.appendChild(radio);
+                    wrapper.appendChild(textWrap);
+                    recommendedList.appendChild(wrapper);
+                });
+            });
+        }
+
+        // 1단계 제출: 추천 클래스 조회
+        step1Form.addEventListener('submit', async function (e) {
             e.preventDefault();
 
-            // 버튼 비활성화 (중복 클릭 방지)
-            const submitBtn = trialForm.querySelector('button');
-            const originalBtnText = submitBtn.innerText;
-            submitBtn.disabled = true;
-            submitBtn.innerText = "Sending...";
+            const originalBtnText = findClassBtn.innerText;
+            findClassBtn.disabled = true;
+            findClassBtn.innerText = 'Searching...';
 
-            const data = {
-                name: trialForm.name.value,
-                age: trialForm.age.value,
-                phone: trialForm.phone.value,
-                experience: trialForm.experience.value,
-                belt: (trialForm.belt && trialForm.belt.value) ? trialForm.belt.value : ''
-            };
+            const age = step1Form.age.value;
+            const beltName = (beltSelect && experienceSelect.value === 'yes') ? beltSelect.value : '';
 
             try {
-                const res = await fetch(`${API_BASE_URL}/send-trial-email`, {
+                const res = await fetch(`${API_BASE_URL}/public/recommend-classes`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
+                    body: JSON.stringify({ dojang_code: MY_DOJANG_CODE, age, belt_name: beltName })
                 });
 
+                let classes = [];
                 if (res.ok) {
-                    alert('Thank you! Your trial request has been sent successfully.');
-                    trialForm.reset();
-                    if(beltInput) beltInput.style.display = 'none';
-                } else {
                     const result = await res.json();
-                    alert(`Failed: ${result.message || 'Please try again later.'}`);
+                    classes = result.classes || [];
+                } else {
+                    console.error('recommend-classes failed with status', res.status);
                 }
+
+                renderRecommendedClasses(classes, step1Form.name.value);
+                step1Form.style.display = 'none';
+                step2Div.style.display = 'block';
             } catch (error) {
-                console.error('Trial Form Error:', error);
-                alert('An error occurred. Please check your connection and try again.');
+                console.error('Recommend Classes Error:', error);
+                // 네트워크 오류가 있어도 신청 자체는 계속 진행할 수 있게 함
+                renderRecommendedClasses([], step1Form.name.value);
+                step1Form.style.display = 'none';
+                step2Div.style.display = 'block';
             } finally {
-                // 버튼 복구
-                submitBtn.disabled = false;
-                submitBtn.innerText = originalBtnText;
+                findClassBtn.disabled = false;
+                findClassBtn.innerText = originalBtnText;
             }
         });
+
+        // 뒤로가기
+        if (backBtn) {
+            backBtn.addEventListener('click', () => {
+                step2Div.style.display = 'none';
+                step1Form.style.display = 'flex';
+            });
+        }
+
+        // 2단계 확정: 최종 신청 전송
+        if (confirmBtn) {
+            confirmBtn.addEventListener('click', async () => {
+                const originalText = confirmBtn.innerText;
+                confirmBtn.disabled = true;
+                confirmBtn.innerText = 'Sending...';
+
+                const data = {
+                    name: step1Form.name.value,
+                    age: step1Form.age.value,
+                    phone: step1Form.phone.value,
+                    experience: step1Form.experience.value,
+                    belt: (beltSelect && beltSelect.value) ? beltSelect.value : '',
+                    className: selectedClassChoice ? selectedClassChoice.class_name : '',
+                    classDay: selectedClassChoice ? selectedClassChoice.day : '',
+                    classTime: selectedClassChoice ? selectedClassChoice.time : '',
+                    classDate: selectedClassChoice ? `${selectedClassChoice.dateLabel} (${selectedClassChoice.dateISO})` : ''
+                };
+
+                try {
+                    const res = await fetch(`${API_BASE_URL}/send-trial-email`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (res.ok) {
+                        step2Div.style.display = 'none';
+                        successMessage.style.display = 'block';
+                        step1Form.reset();
+                        if (beltInput) beltInput.style.display = 'none';
+                    } else {
+                        const result = await res.json();
+                        alert(`Failed: ${result.message || 'Please try again later.'}`);
+                        confirmBtn.disabled = false;
+                    }
+                } catch (error) {
+                    console.error('Trial Confirm Error:', error);
+                    alert('An error occurred. Please check your connection and try again.');
+                    confirmBtn.disabled = false;
+                } finally {
+                    confirmBtn.innerText = originalText;
+                }
+            });
+        }
     }
 
 });
