@@ -153,15 +153,15 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // 요일 -> 다음 예정 날짜 계산 (내일부터 최대 count개)
-        function getNextOccurrences(dayAbbrev, count) {
+        // 요일 -> 앞으로 다가오는 날짜들 계산 (내일부터 최대 windowDays일 이내)
+        function getNextOccurrences(dayAbbrev, windowDays) {
             const dayMap = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thur: 4, Fri: 5, Sat: 6 };
             const targetDow = dayMap[dayAbbrev];
             const results = [];
             if (targetDow === undefined) return results;
 
             const today = new Date();
-            for (let i = 1; results.length < count && i <= 21; i++) {
+            for (let i = 1; i <= windowDays; i++) {
                 const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
                 if (d.getDay() === targetDow) {
                     results.push(d);
@@ -174,6 +174,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
         }
 
+        function toISODate(d) {
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
+
+        // 달력 형태로 추천 클래스 렌더링: 날짜별로 열(column)을 만들고,
+        // 그 날짜에 가능한 시간대를 버튼으로 나열합니다.
         function renderRecommendedClasses(classes, studentName) {
             recommendedList.innerHTML = '';
             selectedClassChoice = null;
@@ -189,56 +195,78 @@ document.addEventListener('DOMContentLoaded', () => {
 
             noClassesMessage.style.display = 'none';
 
-            let optionIndex = 0;
+            const MAX_DAYS_SEARCHED = 21;
+            const MAX_DATE_COLUMNS = 5;
+
+            // 날짜(ISO) 별로 그날 가능한 시간대들을 모읍니다.
+            const slotsByDate = {}; // { 'YYYY-MM-DD': { date: Date, slots: [{class_name, time, day}] } }
+
             classes.forEach((cls) => {
-                const upcomingDates = getNextOccurrences(cls.day, 2);
-                upcomingDates.forEach((d) => {
-                    optionIndex += 1;
-                    const id = `class-option-${optionIndex}`;
-                    const dateLabel = formatDateLabel(d);
+                getNextOccurrences(cls.day, MAX_DAYS_SEARCHED).forEach((d) => {
+                    const iso = toISODate(d);
+                    if (!slotsByDate[iso]) {
+                        slotsByDate[iso] = { date: d, slots: [] };
+                    }
+                    slotsByDate[iso].slots.push({ class_name: cls.class_name, time: cls.time, day: cls.day });
+                });
+            });
 
-                    const wrapper = document.createElement('label');
-                    wrapper.className = 'recommended-class-option';
-                    wrapper.setAttribute('for', id);
+            const sortedDates = Object.keys(slotsByDate).sort().slice(0, MAX_DATE_COLUMNS);
 
-                    const radio = document.createElement('input');
-                    radio.type = 'radio';
-                    radio.name = 'classChoice';
-                    radio.id = id;
-                    radio.value = String(optionIndex);
+            if (sortedDates.length === 0) {
+                noClassesMessage.style.display = 'block';
+                confirmBtn.disabled = false;
+                return;
+            }
 
-                    radio.addEventListener('change', () => {
-                        document.querySelectorAll('.recommended-class-option').forEach((el) => el.classList.remove('selected'));
-                        wrapper.classList.add('selected');
+            const calendarWrap = document.createElement('div');
+            calendarWrap.className = 'calendar-days';
+
+            sortedDates.forEach((iso) => {
+                const { date, slots } = slotsByDate[iso];
+
+                const col = document.createElement('div');
+                col.className = 'calendar-day';
+
+                const header = document.createElement('div');
+                header.className = 'calendar-day-header';
+                header.innerHTML = `
+                    <div class="calendar-day-weekday">${date.toLocaleDateString('en-US', { weekday: 'short' })}</div>
+                    <div class="calendar-day-date">${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>
+                `;
+                col.appendChild(header);
+
+                const slotsWrap = document.createElement('div');
+                slotsWrap.className = 'calendar-day-slots';
+
+                slots.forEach((slot) => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'calendar-slot-btn';
+                    btn.innerHTML = `
+                        <span class="slot-time">${slot.time || ''}</span>
+                        <span class="slot-class">${slot.class_name}</span>
+                    `;
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('.calendar-slot-btn').forEach((b) => b.classList.remove('selected'));
+                        btn.classList.add('selected');
                         selectedClassChoice = {
-                            class_name: cls.class_name,
-                            day: cls.day,
-                            time: cls.time,
-                            dateLabel: dateLabel,
-                            dateISO: d.toISOString().slice(0, 10)
+                            class_name: slot.class_name,
+                            day: slot.day,
+                            time: slot.time,
+                            dateLabel: formatDateLabel(date),
+                            dateISO: iso
                         };
                         confirmBtn.disabled = false;
                     });
-
-                    const textWrap = document.createElement('div');
-                    textWrap.className = 'option-text';
-
-                    const classNameEl = document.createElement('div');
-                    classNameEl.className = 'option-class-name';
-                    classNameEl.textContent = cls.class_name;
-
-                    const dateEl = document.createElement('div');
-                    dateEl.className = 'option-date';
-                    dateEl.textContent = `${dateLabel} · ${cls.time || ''}`;
-
-                    textWrap.appendChild(classNameEl);
-                    textWrap.appendChild(dateEl);
-
-                    wrapper.appendChild(radio);
-                    wrapper.appendChild(textWrap);
-                    recommendedList.appendChild(wrapper);
+                    slotsWrap.appendChild(btn);
                 });
+
+                col.appendChild(slotsWrap);
+                calendarWrap.appendChild(col);
             });
+
+            recommendedList.appendChild(calendarWrap);
         }
 
         // 1단계 제출: 추천 클래스 조회
