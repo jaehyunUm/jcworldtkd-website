@@ -11,7 +11,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. SPA 네비게이션 처리 (Navigation)
     // ============================================================
     const sections = document.querySelectorAll('main section');
+    const sectionIds = new Set(Array.from(sections, (s) => s.id));
     const navLinks = document.querySelectorAll('nav a');
+    // 상단 네비 외에도 #free-trial 같은 섹션으로 이동하는 버튼/링크가
+    // 페이지 어디에나 있을 수 있으므로, href가 실제 섹션 id를 가리키는
+    // 모든 링크(a[href^="#"])에 동일한 SPA 이동 동작을 붙여줍니다.
+    const sectionLinks = Array.from(document.querySelectorAll('a[href^="#"]')).filter((link) => {
+        const targetId = link.getAttribute('href').slice(1);
+        return sectionIds.has(targetId);
+    });
 
     function showSection(id) {
         // 모든 섹션 숨기기
@@ -28,22 +36,25 @@ document.addEventListener('DOMContentLoaded', () => {
         window.scrollTo(0, 0);
     }
 
-    // 네비게이션 클릭 이벤트 연결
-    navLinks.forEach(link => {
+    // 섹션으로 이동하는 모든 링크(네비게이션 + 페이지 내 CTA 버튼)에 클릭 이벤트 연결
+    sectionLinks.forEach(link => {
         link.addEventListener('click', function (e) {
             e.preventDefault();
             const targetId = this.getAttribute('href').replace('#', '');
             
             showSection(targetId);
 
-            // Active 클래스 갱신
+            // Active 클래스 갱신 (상단 네비게이션 메뉴에만 적용)
             navLinks.forEach(l => l.classList.remove('active')); // 기존 active 제거
-            this.classList.add('active'); // 현재 클릭한 메뉴 active 추가
+            const matchingNavLink = document.querySelector(`nav a[href="#${targetId}"]`);
+            if (matchingNavLink) matchingNavLink.classList.add('active'); // 현재 이동한 섹션의 메뉴에 active 추가
         });
     });
 
     // 초기 화면 설정 (Home)
     showSection('home');
+
+
 
 
     // ============================================================
