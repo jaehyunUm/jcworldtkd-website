@@ -831,7 +831,9 @@ main section#home {
     }}
 
 .trial-form-section {
-    max-width: 480px;
+    max-width: 1100px;
+    width: 92%;
+    box-sizing: border-box;
     margin: 48px auto 60px auto;
     padding: 32px 28px 28px 28px;
     background: #fff;
@@ -853,6 +855,9 @@ main section#home {
     flex-direction: column;
     gap: 1.2rem;
     align-items: stretch;
+    max-width: 460px;
+    margin: 0 auto;
+    width: 100%;
 }
 
 #trial-form-step1 label {
@@ -917,9 +922,45 @@ main section#home {
     text-align: left;
 }
 
+.calendar-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.calendar-nav-btn {
+    flex: 0 0 auto;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1.5px solid #e0e0e0;
+    background: #fff;
+    color: #e74c3c;
+    font-size: 1.4rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s, transform 0.15s;
+}
+
+.calendar-nav-btn:hover:not(:disabled) {
+    border-color: #e74c3c;
+    background: #fff0ee;
+    transform: scale(1.06);
+}
+
+.calendar-nav-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
 .calendar-days {
     display: flex;
     gap: 0.7rem;
+    flex: 1 1 auto;
+    min-width: 0;
     overflow-x: auto;
     padding-bottom: 0.4rem;
     -webkit-overflow-scrolling: touch;
@@ -1008,6 +1049,16 @@ main section#home {
 @media (max-width: 600px) {
     .calendar-day {
         min-width: 110px;
+    }
+
+    .calendar-nav-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 1.1rem;
+    }
+
+    .calendar-wrapper {
+        gap: 0.35rem;
     }
 }
 

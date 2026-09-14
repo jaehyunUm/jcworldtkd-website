@@ -178,52 +178,60 @@ document.addEventListener('DOMContentLoaded', () => {
             return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
         }
 
-        // 달력 형태로 추천 클래스 렌더링: 날짜별로 열(column)을 만들고,
-        // 그 날짜에 가능한 시간대를 버튼으로 나열합니다.
-        function renderRecommendedClasses(classes, studentName) {
+        // 달력 페이지네이션 상태 (이전/다음 버튼으로 몇 주 뒤까지 이동 가능)
+        const CALENDAR_DAYS_SEARCHED = 60;   // 앞으로 최대 몇 일 뒤까지 날짜를 찾을지
+        const CALENDAR_DATES_PER_PAGE = 5;   // 한 화면에 보여줄 날짜 컬럼 수
+        let calendarSortedDates = [];
+        let calendarSlotsByDate = {};
+        let calendarPageStart = 0;
+
+        // 현재 페이지에 해당하는 날짜 컬럼들만 다시 그립니다 (이전/다음 버튼 클릭 시 재사용)
+        function renderCalendarPage() {
             recommendedList.innerHTML = '';
-            selectedClassChoice = null;
-            confirmBtn.disabled = true;
 
-            if (step2NameSpan) step2NameSpan.textContent = studentName || 'your child';
-
-            if (!classes || classes.length === 0) {
-                noClassesMessage.style.display = 'block';
-                confirmBtn.disabled = false; // 매칭 실패해도 기본 정보만으로 문의는 가능하게
-                return;
-            }
-
-            noClassesMessage.style.display = 'none';
-
-            const MAX_DAYS_SEARCHED = 21;
-            const MAX_DATE_COLUMNS = 5;
-
-            // 날짜(ISO) 별로 그날 가능한 시간대들을 모읍니다.
-            const slotsByDate = {}; // { 'YYYY-MM-DD': { date: Date, slots: [{class_name, time, day}] } }
-
-            classes.forEach((cls) => {
-                getNextOccurrences(cls.day, MAX_DAYS_SEARCHED).forEach((d) => {
-                    const iso = toISODate(d);
-                    if (!slotsByDate[iso]) {
-                        slotsByDate[iso] = { date: d, slots: [] };
-                    }
-                    slotsByDate[iso].slots.push({ class_name: cls.class_name, time: cls.time, day: cls.day });
-                });
-            });
-
-            const sortedDates = Object.keys(slotsByDate).sort().slice(0, MAX_DATE_COLUMNS);
-
-            if (sortedDates.length === 0) {
+            if (calendarSortedDates.length === 0) {
                 noClassesMessage.style.display = 'block';
                 confirmBtn.disabled = false;
                 return;
             }
 
+            noClassesMessage.style.display = 'none';
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'calendar-wrapper';
+
+            const prevBtn = document.createElement('button');
+            prevBtn.type = 'button';
+            prevBtn.className = 'calendar-nav-btn calendar-nav-prev';
+            prevBtn.innerHTML = '&#8249;';
+            prevBtn.setAttribute('aria-label', 'Previous dates');
+            prevBtn.disabled = calendarPageStart === 0;
+            prevBtn.addEventListener('click', () => {
+                calendarPageStart = Math.max(0, calendarPageStart - CALENDAR_DATES_PER_PAGE);
+                renderCalendarPage();
+            });
+
+            const nextBtn = document.createElement('button');
+            nextBtn.type = 'button';
+            nextBtn.className = 'calendar-nav-btn calendar-nav-next';
+            nextBtn.innerHTML = '&#8250;';
+            nextBtn.setAttribute('aria-label', 'Next dates');
+            nextBtn.disabled = (calendarPageStart + CALENDAR_DATES_PER_PAGE) >= calendarSortedDates.length;
+            nextBtn.addEventListener('click', () => {
+                calendarPageStart = Math.min(
+                    calendarSortedDates.length - 1,
+                    calendarPageStart + CALENDAR_DATES_PER_PAGE
+                );
+                renderCalendarPage();
+            });
+
             const calendarWrap = document.createElement('div');
             calendarWrap.className = 'calendar-days';
 
-            sortedDates.forEach((iso) => {
-                const { date, slots } = slotsByDate[iso];
+            const pageDates = calendarSortedDates.slice(calendarPageStart, calendarPageStart + CALENDAR_DATES_PER_PAGE);
+
+            pageDates.forEach((iso) => {
+                const { date, slots } = calendarSlotsByDate[iso];
 
                 const col = document.createElement('div');
                 col.className = 'calendar-day';
@@ -243,6 +251,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     const btn = document.createElement('button');
                     btn.type = 'button';
                     btn.className = 'calendar-slot-btn';
+                    if (selectedClassChoice && selectedClassChoice.dateISO === iso &&
+                        selectedClassChoice.class_name === slot.class_name &&
+                        selectedClassChoice.time === slot.time) {
+                        btn.classList.add('selected');
+                    }
                     btn.innerHTML = `
                         <span class="slot-time">${slot.time || ''}</span>
                         <span class="slot-class">${slot.class_name}</span>
@@ -266,7 +279,54 @@ document.addEventListener('DOMContentLoaded', () => {
                 calendarWrap.appendChild(col);
             });
 
-            recommendedList.appendChild(calendarWrap);
+            wrapper.appendChild(prevBtn);
+            wrapper.appendChild(calendarWrap);
+            wrapper.appendChild(nextBtn);
+            recommendedList.appendChild(wrapper);
+        }
+
+        // 달력 형태로 추천 클래스 렌더링: 날짜별로 열(column)을 만들고,
+        // 그 날짜에 가능한 시간대를 버튼으로 나열합니다. (이전/다음 버튼으로 몇 주 뒤까지 조회 가능)
+        function renderRecommendedClasses(classes, studentName) {
+            recommendedList.innerHTML = '';
+            selectedClassChoice = null;
+            confirmBtn.disabled = true;
+            calendarPageStart = 0;
+
+            if (step2NameSpan) step2NameSpan.textContent = studentName || 'your child';
+
+            if (!classes || classes.length === 0) {
+                noClassesMessage.style.display = 'block';
+                confirmBtn.disabled = false; // 매칭 실패해도 기본 정보만으로 문의는 가능하게
+                calendarSortedDates = [];
+                calendarSlotsByDate = {};
+                return;
+            }
+
+            noClassesMessage.style.display = 'none';
+
+            // 날짜(ISO) 별로 그날 가능한 시간대들을 모읍니다.
+            calendarSlotsByDate = {}; // { 'YYYY-MM-DD': { date: Date, slots: [{class_name, time, day}] } }
+
+            classes.forEach((cls) => {
+                getNextOccurrences(cls.day, CALENDAR_DAYS_SEARCHED).forEach((d) => {
+                    const iso = toISODate(d);
+                    if (!calendarSlotsByDate[iso]) {
+                        calendarSlotsByDate[iso] = { date: d, slots: [] };
+                    }
+                    calendarSlotsByDate[iso].slots.push({ class_name: cls.class_name, time: cls.time, day: cls.day });
+                });
+            });
+
+            calendarSortedDates = Object.keys(calendarSlotsByDate).sort();
+
+            if (calendarSortedDates.length === 0) {
+                noClassesMessage.style.display = 'block';
+                confirmBtn.disabled = false;
+                return;
+            }
+
+            renderCalendarPage();
         }
 
         // 1단계 제출: 추천 클래스 조회
