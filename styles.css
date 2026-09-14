@@ -437,7 +437,274 @@ footer {
     -webkit-background-clip: unset;
     -webkit-text-fill-color: unset;
     background-clip: unset;
-}@media (max-width: 600px) {
+}
+
+/* ============================================================
+   홈 히어로 (5초 안에 이해되도록: 무엇을 하는 곳 / 왜 좋은지 / 시작하는 법)
+   ============================================================ */
+.home-hero {
+    max-width: 800px;
+    margin: 0 auto 2rem auto;
+    padding: 0 1.5rem;
+    text-align: center;
+}
+
+.home-hero-title {
+    font-size: 2.1rem;
+    font-weight: 800;
+    color: #222;
+    line-height: 1.25;
+    margin-bottom: 0.9rem;
+}
+
+.home-hero-subtitle {
+    font-size: 1.1rem;
+    color: #555;
+    line-height: 1.6;
+    max-width: 620px;
+    margin: 0 auto 1.2rem auto;
+}
+
+.home-hero-trust {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1.6rem;
+}
+
+.home-hero-stars {
+    color: #f9c700;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+}
+
+.home-hero-trust-text {
+    font-size: 0.95rem;
+    color: #777;
+    font-weight: 600;
+}
+
+.home-hero-cta {
+    display: inline-block;
+    background: linear-gradient(90deg, #e74c3c 0%, #f9d423 100%);
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 30px;
+    padding: 0.85rem 2.4rem;
+    box-shadow: 0 4px 14px rgba(231,76,60,0.25);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.home-hero-cta:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 6px 18px rgba(231,76,60,0.32);
+}
+
+@media (max-width: 600px) {
+    .home-hero-title {
+        font-size: 1.5rem;
+    }
+    .home-hero-subtitle {
+        font-size: 1rem;
+    }
+}
+
+/* ============================================================
+   나이대별 프로그램 안내 카드
+   ============================================================ */
+.age-programs {
+    max-width: 1100px;
+    margin: 3rem auto;
+    padding: 0 1.5rem;
+    text-align: center;
+}
+
+.age-programs-intro {
+    color: #666;
+    max-width: 600px;
+    margin: 0 auto 2rem auto;
+    font-size: 1.02rem;
+}
+
+.age-programs-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.2rem;
+}
+
+.age-program-card {
+    background: #fff;
+    border: 1.5px solid #eee;
+    border-radius: 16px;
+    padding: 1.6rem 1.2rem;
+    text-align: left;
+    box-shadow: 0 2px 10px rgba(44,62,80,0.06);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.age-program-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(44,62,80,0.1);
+}
+
+.age-program-age {
+    display: inline-block;
+    background: linear-gradient(90deg, #e74c3c 0%, #f9d423 100%);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.25rem 0.7rem;
+    border-radius: 20px;
+    margin-bottom: 0.7rem;
+}
+
+.age-program-name {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #222;
+    margin-bottom: 0.5rem;
+}
+
+.age-program-card p {
+    font-size: 0.95rem;
+    color: #666;
+    line-height: 1.5;
+}
+
+.age-programs-note {
+    margin-top: 1.6rem;
+    color: #888;
+    font-size: 0.95rem;
+}
+
+.age-programs-note a {
+    color: #e74c3c;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+@media (max-width: 900px) {
+    .age-programs-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 500px) {
+    .age-programs-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================================
+   성인 대상 메시지
+   ============================================================ */
+.adult-callout {
+    max-width: 800px;
+    margin: 3rem auto;
+    padding: 2.4rem 2rem;
+    text-align: center;
+    background: #fff7f5;
+    border-radius: 20px;
+    border: 1.5px solid #fbdcd4;
+}
+
+.adult-callout p {
+    color: #444;
+    font-size: 1.03rem;
+    line-height: 1.7;
+    max-width: 640px;
+    margin: 0 auto 1.1rem auto;
+}
+
+.adult-callout-cta {
+    display: inline-block;
+    margin-top: 0.6rem;
+    background: #fff;
+    color: #e74c3c;
+    border: 2px solid #e74c3c;
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 30px;
+    padding: 0.7rem 2rem;
+    transition: background 0.2s, color 0.2s;
+}
+
+.adult-callout-cta:hover {
+    background: #e74c3c;
+    color: #fff;
+}
+
+/* ============================================================
+   후기 (Testimonials)
+   ============================================================ */
+.testimonials {
+    max-width: 1100px;
+    margin: 3rem auto;
+    padding: 0 1.5rem;
+    text-align: center;
+}
+
+.testimonials-rating {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #444;
+    margin-bottom: 2rem;
+}
+
+.testimonials-stars {
+    color: #f9c700;
+    letter-spacing: 1px;
+    margin-right: 0.4rem;
+}
+
+.testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.2rem;
+}
+
+.testimonial-card {
+    background: #fff;
+    border: 1.5px solid #eee;
+    border-radius: 16px;
+    padding: 1.6rem 1.4rem;
+    text-align: left;
+    box-shadow: 0 2px 10px rgba(44,62,80,0.06);
+}
+
+.testimonial-text {
+    color: #333;
+    font-size: 0.98rem;
+    line-height: 1.6;
+    margin-bottom: 0.9rem;
+}
+
+.testimonial-author {
+    color: #e74c3c;
+    font-weight: 700;
+    font-size: 0.92rem;
+}
+
+.testimonials-more {
+    margin-top: 1.8rem;
+    color: #888;
+}
+
+.testimonials-more a {
+    color: #e74c3c;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+@media (max-width: 900px) {
+    .testimonials-grid {
+        grid-template-columns: 1fr;
+    }
+}
+@media (max-width: 600px) {
     .slogan-bar {
         padding: 0.5rem 0;
         margin-top: 60px;
