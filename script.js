@@ -54,6 +54,36 @@ document.addEventListener('DOMContentLoaded', () => {
     // 초기 화면 설정 (Home)
     showSection('home');
 
+    // 모바일 햄버거 메뉴 토글
+    const navToggle = document.getElementById('navToggle');
+    const navMenu = document.getElementById('navMenu');
+
+    function closeMobileMenu() {
+        if (navToggle) navToggle.classList.remove('nav-open');
+        if (navMenu) navMenu.classList.remove('nav-open');
+        if (navToggle) navToggle.setAttribute('aria-expanded', 'false');
+    }
+
+    if (navToggle && navMenu) {
+        navToggle.addEventListener('click', () => {
+            const isOpen = navMenu.classList.toggle('nav-open');
+            navToggle.classList.toggle('nav-open', isOpen);
+            navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+
+        // 메뉴에서 항목을 선택하면 자동으로 닫힘
+        navMenu.querySelectorAll('a').forEach((link) => {
+            link.addEventListener('click', closeMobileMenu);
+        });
+
+        // 메뉴 바깥을 클릭하면 닫힘
+        document.addEventListener('click', (e) => {
+            if (!navMenu.classList.contains('nav-open')) return;
+            if (navMenu.contains(e.target) || navToggle.contains(e.target)) return;
+            closeMobileMenu();
+        });
+    }
+
 
 
 
